@@ -113,7 +113,7 @@ function _M:onTextMessage(blocks)
 			return
 		end
 
-		local user_id, error_tr_id = u:get_user_id(msg, blocks)
+		local user_id, error_tr_id = u:getUserId(msg, blocks)
 		if not user_id then
 			msg:send_reply(error_tr_id, "Markdown")
 			return
@@ -161,7 +161,7 @@ function _M:onTextMessage(blocks)
 		end
 
 		------------------ get user_id --------------------------
-		local user_id, err = u:get_user_id(msg, blocks)
+		local user_id, err = u:getUserId(msg, blocks)
 
 		if not user_id then
 			msg:send_reply(err, "Markdown")
@@ -229,14 +229,14 @@ function _M:onCallbackQuery(blocks)
 		})
 	end
 	if blocks[1] == 'recache' and msg:is_from_admin() then
-		local missing_sec = tonumber(red:ttl('cache:chat:'..msg.target_id..':admins') or 0)
-		local wait = 600
-		if config.bot_settings.cache_time.adminlist - missing_sec < wait then
-			local seconds_to_wait = wait - (config.bot_settings.cache_time.adminlist - missing_sec)
-			api:answerCallbackQuery(msg.cb_id,i18n(
-					"The adminlist has just been updated. You must wait 10 minutes from the last refresh (wait  %d seconds)"
-				):format(seconds_to_wait), true)
-		else
+		-- local missing_sec = tonumber(red:ttl('cache:chat:'..msg.target_id..':admins') or 0)
+		-- local wait = 600
+		-- if config.bot_settings.cache_time.adminlist - missing_sec < wait then
+		-- 	local seconds_to_wait = wait - (config.bot_settings.cache_time.adminlist - missing_sec)
+		-- 	api:answerCallbackQuery(msg.cb_id,i18n(
+		-- 			"The adminlist has just been updated. You must wait 10 minutes from the last refresh (wait  %d seconds)"
+		-- 		):format(seconds_to_wait), true)
+		-- else
 			red:del('cache:chat:'..msg.target_id..':admins')
 			u:cache_adminlist(msg.target_id)
 			local cached_admins = red:smembers('cache:chat:'..msg.target_id..':admins')
@@ -245,7 +245,7 @@ function _M:onCallbackQuery(blocks)
 				:format(time, #cached_admins)
 			api:answerCallbackQuery(msg.cb_id, i18n("✅ Updated. Next update in %s"):format(time))
 			api:editMessageText(msg.chat.id, msg.message_id, nil, text, "Markdown", nil, do_keyboard_cache(self, msg.target_id))
-		end
+		-- end
 	end
 end
 
